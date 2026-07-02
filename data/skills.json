@@ -1,0 +1,44 @@
+[
+  {
+    "category": "Programming",
+    "icon": "python",
+    "name": "Python",
+    "levelPercent": 85,
+    "description": "Expertise in Pandas, NumPy, Matplotlib, and Seaborn for data manipulation, exploratory data analysis (EDA), and visualization."
+  },
+  {
+    "category": "Database",
+    "icon": "database",
+    "name": "SQL",
+    "levelPercent": 85,
+    "description": "Proficient in writing complex queries using Joins, CTEs, Window Functions, Aggregations, Subqueries, and Oracle PL/SQL."
+  },
+  {
+    "category": "Analytics",
+    "icon": "chart",
+    "name": "Power BI & Tableau",
+    "levelPercent": 80,
+    "description": "Building interactive dashboard reports, designing dynamic DAX measures, and configuring slicers and drill-through actions."
+  },
+  {
+    "category": "Analytics",
+    "icon": "table",
+    "name": "Excel Dashboards",
+    "levelPercent": 80,
+    "description": "Applying Pivot Tables, VLOOKUP, Power Query, Conditional Formatting, and detailed Data Cleaning procedures."
+  },
+  {
+    "category": "Tools",
+    "icon": "git",
+    "name": "GitHub & Git",
+    "levelPercent": 80,
+    "description": "Version control, code management, and repository collaboration."
+  },
+  {
+    "category": "Tools",
+    "icon": "stats",
+    "name": "Jupyter Notebook & Colab",
+    "levelPercent": 85,
+    "description": "Developing interactive python notebooks, documenting code execution flows, and sharing analysis results."
+  }
+]

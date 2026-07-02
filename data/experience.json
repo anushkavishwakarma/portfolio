@@ -1,0 +1,93 @@
+{
+  "experience": [],
+  "certifications": [
+    {
+      "name": "Professional Program in Data Analytics",
+      "org": "DVOC Institute",
+      "color": "#4285F4",
+      "date": "2025",
+      "icon": "stats",
+      "credentialUrl": "https://www.linkedin.com/in/anushka-vishwakarma8a7187278/"
+    }
+  ],
+  "achievements": [
+    {
+      "title": "Data Analytics Specialization",
+      "org": "DVOC Institute",
+      "icon": "star",
+      "description": "Completed extensive training in Python EDA, advanced SQL query design, and interactive Power BI visualization methodologies."
+    },
+    {
+      "title": "Exploratory Data Analysis Showcase",
+      "org": "GitHub Community",
+      "icon": "medal",
+      "description": "Published comprehensive data science notebooks mapping transaction histories and e-commerce behavioral analytics."
+    }
+  ],
+  "dashboards": [
+    {
+      "id": 1,
+      "title": "Sales Performance Dashboard",
+      "tool": "Power BI",
+      "image": "images/dashboards/sales-dashboard.png",
+      "description": "Interactive retail analytics dashboard mapping sales growth, profit margins, and regional sales distribution.",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": 2,
+      "title": "E-Commerce Query Analysis",
+      "tool": "SQL / Excel",
+      "image": "images/dashboards/sql-analysis.png",
+      "description": "SQL aggregation patterns analyzing repeat purchases, demand forecasting, and inventory alignment.",
+      "color": "#107c41"
+    }
+  ],
+  "github": {
+    "username": "anushkavishwakarma",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/127387745?v=4",
+    "bio": "B.Sc. Computer Science Graduate with expertise in Python, SQL, Excel, and Power BI.",
+    "profileUrl": "https://github.com/anushkavishwakarma",
+    "stats": {
+      "repos": 5,
+      "commits": 86,
+      "stars": 0,
+      "followers": 2
+    },
+    "topLanguages": [
+      { "name": "HTML & CSS", "percent": 54, "color": "#e34c26" },
+      { "name": "JavaScript", "percent": 30, "color": "#f1e05a" },
+      { "name": "Power BI / DAX", "percent": 12, "color": "#f2c744" },
+      { "name": "SQL & PL/SQL", "percent": 4, "color": "#00758f" }
+    ],
+    "recentRepos": [
+      {
+        "name": "portfolio",
+        "description": "Personal portfolio website built with pure HTML5, CSS3, and vanilla JavaScript.",
+        "url": "https://github.com/anushkavishwakarma/portfolio",
+        "language": "CSS",
+        "stars": 0
+      },
+      {
+        "name": "Sales-Performance-Dashboard-Power-BI-",
+        "description": "Interactive Power BI dashboard analyzing retail beverage sales, profit, and regional performance.",
+        "url": "https://github.com/anushkavishwakarma/Sales-Performance-Dashboard-Power-BI-",
+        "language": "Power BI",
+        "stars": 0
+      },
+      {
+        "name": "Banking-Management-System-Oracle-SQL-PL-SQL-",
+        "description": "Banking Management System implementing relational database design, packages, triggers, and sequences.",
+        "url": "https://github.com/anushkavishwakarma/Banking-Management-System-Oracle-SQL-PL-SQL-",
+        "language": "PL/SQL",
+        "stars": 0
+      },
+      {
+        "name": "ecommerce_sales",
+        "description": "Data-driven analysis of e-commerce sales using SQL, helping uncover trends and customer behavior.",
+        "url": "https://github.com/anushkavishwakarma/ecommerce_sales",
+        "language": "SQL",
+        "stars": 0
+      }
+    ]
+  }
+}

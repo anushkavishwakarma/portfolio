@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "title": "Customer Purchase Behavior Analysis",
+    "subtitle": "Exploratory Data Analysis & Churn Prediction",
+    "shortDesc": "Performed end-to-end exploratory data analysis on 100k+ customer transactions to identify purchasing habits and churn risks.",
+    "image": "images/projects/customer-segmentation.png",
+    "color": "#8b5cf6",
+    "techStack": ["Python", "Pandas", "NumPy", "Matplotlib", "Seaborn"],
+    "features": [
+      "End-to-end EDA on 100k+ transaction records",
+      "RFM segmentation, cohort analysis, and churn rate estimation",
+      "Produced 15+ interactive visualizations and correlation heatmaps"
+    ],
+    "githubUrl": "https://github.com/anushkavishwakarma/portfolio",
+    "demoUrl": "https://github.com/anushkavishwakarma/portfolio"
+  },
+  {
+    "id": 2,
+    "title": "Sales Performance Dashboard",
+    "subtitle": "E-Commerce Regional Insights",
+    "shortDesc": "Built an interactive Power BI dashboard tracking revenue, profit margins, and regional sales performance across multiple business units.",
+    "image": "images/projects/sales-dashboard.png",
+    "color": "#6366f1",
+    "techStack": ["Power BI", "DAX", "Power Query", "Excel"],
+    "features": [
+      "Designed dynamic DAX measures for YoY growth and target vs. actual KPIs",
+      "Configured interactive slicers, drill-through reports, and filters",
+      "Enabled self-service analytics reporting for non-technical stakeholders"
+    ],
+    "githubUrl": "https://github.com/anushkavishwakarma/Sales-Performance-Dashboard-Power-BI-",
+    "demoUrl": "https://github.com/anushkavishwakarma/Sales-Performance-Dashboard-Power-BI-"
+  },
+  {
+    "id": 3,
+    "title": "E-Commerce Sales Analysis",
+    "subtitle": "SQL Database Query Analytics",
+    "shortDesc": "Analyzed transactional databases using advanced SQL queries to uncover product demand and seasonal customer behaviors.",
+    "image": "images/projects/sql-analysis.png",
+    "color": "#06b6d4",
+    "techStack": ["SQL", "Oracle PL/SQL", "CTEs", "Window Functions"],
+    "features": [
+      "Wrote complex CTEs and window functions to extract top products",
+      "Analyzed customer metrics: repeat purchase rates and average basket sizes",
+      "Delivered strategic inventory recommendations based on seasonal demand cycles"
+    ],
+    "githubUrl": "https://github.com/anushkavishwakarma/ecommerce_sales",
+    "demoUrl": "https://github.com/anushkavishwakarma/ecommerce_sales"
+  }
+]

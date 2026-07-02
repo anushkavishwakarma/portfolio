@@ -297,13 +297,14 @@ function initSkillsFilter(skills) {
    RENDER: PROJECTS SECTION
    Generates project cards with hover overlay
 ───────────────────────────────────────────────────── */
-function renderProjects(projects) {
+async function renderProjects(projects, username, fallbackRepos) {
   const grid = document.getElementById('projectsGrid');
   if (!grid || !projects) return;
 
   const placeholderEmojis = ['📊','🤖','💰','👥','🛒','🗃️'];
-
-  grid.innerHTML = projects.map((proj, i) => `
+  
+  // Clean card rendering helper
+  const renderCard = (proj, i) => `
     <article class="glass-card project-card reveal delay-${Math.min(i % 3 + 1, 5)}" aria-labelledby="proj-title-${proj.id}">
       <!-- Thumbnail -->
       <div class="project-thumbnail">
@@ -315,7 +316,7 @@ function renderProjects(projects) {
         />
         <!-- Placeholder shown when image missing -->
         <div class="project-thumbnail-placeholder" style="display:none; background: linear-gradient(135deg, ${proj.color}22, ${proj.color}08);">
-          <span style="font-size:3.5rem;">${placeholderEmojis[i] || '📁'}</span>
+          <span style="font-size:3.5rem;">${placeholderEmojis[i % placeholderEmojis.length] || '📁'}</span>
         </div>
         <!-- Hover overlay with quick action buttons -->
         <div class="project-overlay" aria-hidden="true">
@@ -323,10 +324,12 @@ function renderProjects(projects) {
              class="btn btn-secondary btn-sm" tabindex="-1" aria-label="View ${proj.title} on GitHub">
             🐙 GitHub
           </a>
-          <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
-             class="btn btn-primary btn-sm" tabindex="-1" aria-label="View live demo of ${proj.title}">
-            🚀 Demo
-          </a>
+          ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
+            <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
+               class="btn btn-primary btn-sm" tabindex="-1" aria-label="View live demo of ${proj.title}">
+              🚀 Demo
+            </a>
+          ` : ''}
         </div>
       </div>
 
@@ -353,14 +356,128 @@ function renderProjects(projects) {
              class="btn btn-outline btn-sm" aria-label="View source code for ${proj.title} on GitHub">
             🐙 Code
           </a>
-          <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
-             class="btn btn-secondary btn-sm" aria-label="View live demo of ${proj.title}">
-            ↗ Demo
-          </a>
+          ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
+            <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
+               class="btn btn-secondary btn-sm" aria-label="View live demo of ${proj.title}">
+              ↗ Demo
+            </a>
+          ` : ''}
         </div>
       </div>
     </article>
-  `).join('');
+  `;
+
+  // Render initial static local projects to main grid
+  grid.innerHTML = projects.map((proj, i) => renderCard(proj, i)).join('');
+
+  if (!username) return;
+
+  let extraProjects = [];
+  const colors = ['#8b5cf6', '#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+
+  try {
+    const res = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=30`);
+    if (res.ok) {
+      const repos = await res.json();
+      const nonForks = repos.filter(r => !r.fork);
+      const localUrls = projects.map(p => p.githubUrl.toLowerCase().trim().replace(/\/$/, ''));
+      
+      const extraRepos = nonForks.filter(r => {
+        const repoUrl = r.html_url.toLowerCase().trim().replace(/\/$/, '');
+        return !localUrls.includes(repoUrl);
+      });
+
+      extraProjects = extraRepos.map((repo, i) => {
+        const formattedTitle = repo.name
+          .replace(/[-_]+/g, ' ')
+          .trim()
+          .replace(/\b\w/g, c => c.toUpperCase());
+          
+        return {
+          id: repo.id,
+          title: formattedTitle,
+          subtitle: repo.language ? `${repo.language} Project` : 'GitHub Repository',
+          shortDesc: repo.description || 'Check out the details and source code of this project repository directly on GitHub.',
+          image: '',
+          color: colors[i % colors.length],
+          techStack: repo.language ? [repo.language] : ['Repository'],
+          features: [
+            `Pushed: ${new Date(repo.pushed_at).toLocaleDateString()}`,
+            `Forks: ${repo.forks_count}`,
+            `Stars: ${repo.stargazers_count}`
+          ],
+          githubUrl: repo.html_url,
+          demoUrl: repo.homepage || repo.html_url
+        };
+      });
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch (err) {
+    console.warn('Could not sync live additional projects from GitHub, using local fallback:', err.message);
+    if (fallbackRepos && fallbackRepos.length > 0) {
+      const localUrls = projects.map(p => p.githubUrl.toLowerCase().trim().replace(/\/$/, ''));
+      const uniqueFallbacks = fallbackRepos.filter(r => {
+        const repoUrl = r.url.toLowerCase().trim().replace(/\/$/, '');
+        return !localUrls.includes(repoUrl);
+      });
+      
+      extraProjects = uniqueFallbacks.map((repo, i) => {
+        const formattedTitle = repo.name
+          .replace(/[-_]+/g, ' ')
+          .trim()
+          .replace(/\b\w/g, c => c.toUpperCase());
+          
+        return {
+          id: 'fallback-' + i,
+          title: formattedTitle,
+          subtitle: repo.language ? `${repo.language} Project` : 'GitHub Repository',
+          shortDesc: repo.description || 'Check out the details and source code of this project repository directly on GitHub.',
+          image: '',
+          color: colors[i % colors.length],
+          techStack: repo.language ? [repo.language] : ['Repository'],
+          features: [
+            `Stars: ${repo.stars || 0}`
+          ],
+          githubUrl: repo.url,
+          demoUrl: repo.url
+        };
+      });
+    }
+  }
+
+  if (extraProjects.length > 0) {
+    const container = grid.parentElement;
+    let moreSection = document.getElementById('moreProjectsSection');
+    
+    // Create 'More Projects' sub-section container if it doesn't exist
+    if (!moreSection) {
+      moreSection = document.createElement('div');
+      moreSection.id = 'moreProjectsSection';
+      moreSection.className = 'more-projects-container';
+      moreSection.style = 'margin-top: 5rem; width: 100%; border-top: 1px dashed var(--bg-secondary); padding-top: 4rem;';
+      
+      moreSection.innerHTML = `
+        <div class="section-header" style="margin-bottom: 3rem; text-align: center;">
+          <span class="section-label">Other Repositories</span>
+          <h3 class="section-title" style="font-size: 2rem; margin-top: 0.5rem; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">More Projects</h3>
+          <p class="section-subtitle">Additional repositories synchronized in real-time from my GitHub profile.</p>
+        </div>
+        <div class="projects-grid" id="moreProjectsGrid" aria-label="More projects grid"></div>
+      `;
+      container.appendChild(moreSection);
+    }
+    
+    const moreGrid = document.getElementById('moreProjectsGrid');
+    if (moreGrid) {
+      moreGrid.innerHTML = extraProjects.map((proj, i) => renderCard(proj, projects.length + i)).join('');
+    }
+    
+    // Re-trigger scroll reveal transitions for new cards
+    if (typeof initScrollReveal === 'function') {
+      setTimeout(initScrollReveal, 100);
+    }
+  }
 }
 
 /* ─────────────────────────────────────────────────────
@@ -369,22 +486,40 @@ function renderProjects(projects) {
 function renderExperience(data) {
   // Internships
   const expGrid = document.getElementById('experienceGrid');
-  if (expGrid && data.experience) {
-    expGrid.innerHTML = data.experience.map((exp, i) => `
-      <div class="glass-card exp-card reveal delay-${i + 1}">
-        <div class="exp-header">
-          <div>
-            <div class="exp-title">${exp.role}</div>
-            <div class="exp-company" style="color:${exp.color}">${exp.company}</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:0.25rem;">📍 ${exp.location}</div>
+  if (expGrid) {
+    // Look up the exact header container containing "💼 Internships"
+    const labelSpan = Array.from(document.querySelectorAll('#experience .section-label')).find(
+      el => el.textContent.includes('💼 Internships')
+    );
+    const internshipHeader = labelSpan ? labelSpan.parentElement : null;
+    // Find the first divider in #experience section
+    const expDivider = document.querySelector('#experience .divider');
+
+    if (!data.experience || data.experience.length === 0) {
+      expGrid.style.display = 'none';
+      if (internshipHeader) internshipHeader.style.display = 'none';
+      if (expDivider) expDivider.style.display = 'none';
+    } else {
+      expGrid.style.display = '';
+      if (internshipHeader) internshipHeader.style.display = '';
+      if (expDivider) expDivider.style.display = '';
+      
+      expGrid.innerHTML = data.experience.map((exp, i) => `
+        <div class="glass-card exp-card reveal delay-${i + 1}">
+          <div class="exp-header">
+            <div>
+              <div class="exp-title">${exp.role}</div>
+              <div class="exp-company" style="color:${exp.color}">${exp.company}</div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:0.25rem;">📍 ${exp.location}</div>
+            </div>
+            <span class="exp-duration">${exp.duration}</span>
           </div>
-          <span class="exp-duration">${exp.duration}</span>
+          <ul class="exp-responsibilities" aria-label="Responsibilities">
+            ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
+          </ul>
         </div>
-        <ul class="exp-responsibilities" aria-label="Responsibilities">
-          ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
-        </ul>
-      </div>
-    `).join('');
+      `).join('');
+    }
   }
 
   // Certifications
@@ -843,8 +978,10 @@ async function init() {
   ]);
 
   // ── Render data-driven sections ──
+  const username = experienceData?.github?.username || 'anushkavishwakarma';
+  const fallbackRepos = experienceData?.github?.recentRepos || [];
   renderSkills(skills);
-  renderProjects(projects);
+  renderProjects(projects, username, fallbackRepos);
 
   if (experienceData) {
     renderExperience(experienceData);
