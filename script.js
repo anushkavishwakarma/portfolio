@@ -304,76 +304,137 @@ async function renderProjects(projects, username, fallbackRepos) {
   const placeholderEmojis = ['📊','🤖','💰','👥','🛒','🗃️'];
   
   // Clean card rendering helper
-  const renderCard = (proj, i) => `
-    <article class="glass-card project-card reveal delay-${Math.min(i % 3 + 1, 5)}" aria-labelledby="proj-title-${proj.id}">
-      <!-- Thumbnail -->
-      <div class="project-thumbnail">
-        <img
-          src="${proj.image}"
-          alt="${proj.title} project screenshot"
-          loading="lazy"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
-        <!-- Placeholder shown when image missing -->
-        <div class="project-thumbnail-placeholder" style="display:none; background: linear-gradient(135deg, ${proj.color}22, ${proj.color}08);">
-          <span style="font-size:3.5rem;">${placeholderEmojis[i % placeholderEmojis.length] || '📁'}</span>
-        </div>
-        <!-- Hover overlay with quick action buttons -->
-        <div class="project-overlay" aria-hidden="true">
-          <a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer"
-             class="btn btn-secondary btn-sm" tabindex="-1" aria-label="View ${proj.title} on GitHub">
-            🐙 GitHub
-          </a>
-          ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
-            <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
-               class="btn btn-primary btn-sm" tabindex="-1" aria-label="View live demo of ${proj.title}">
-              🚀 Demo
+  const renderCard = (proj, i, revealDelay = true) => {
+    const delayClass = revealDelay ? `reveal delay-${Math.min(i % 3 + 1, 5)}` : '';
+    const hasImage = proj.image && proj.image.trim() !== '';
+    return `
+      <article class="glass-card project-card ${delayClass}" aria-labelledby="proj-title-${proj.id}">
+        <!-- Thumbnail -->
+        <div class="project-thumbnail">
+          <img
+            src="${proj.image || ''}"
+            alt="${proj.title} project screenshot"
+            loading="lazy"
+            style="${hasImage ? '' : 'display:none;'}"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <!-- Placeholder shown when image missing -->
+          <div class="project-thumbnail-placeholder" style="${hasImage ? 'display:none;' : 'display:flex;'} background: linear-gradient(135deg, ${proj.color}22, ${proj.color}08);">
+            <span style="font-size:3.5rem;">${placeholderEmojis[i % placeholderEmojis.length] || '📁'}</span>
+          </div>
+          <!-- Hover overlay with quick action buttons -->
+          <div class="project-overlay" aria-hidden="true">
+            <a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer"
+               class="btn btn-secondary btn-sm" tabindex="-1" aria-label="View ${proj.title} on GitHub">
+              🐙 GitHub
             </a>
-          ` : ''}
+            ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
+              <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
+                 class="btn btn-primary btn-sm" tabindex="-1" aria-label="View live demo of ${proj.title}">
+                🚀 Demo
+              </a>
+            ` : ''}
+          </div>
         </div>
+
+        <!-- Card body -->
+        <div class="project-body">
+          <div class="project-color-bar" style="background:${proj.color};" aria-hidden="true"></div>
+          <h3 class="project-title" id="proj-title-${proj.id}">${proj.title}</h3>
+          <p class="project-subtitle">${proj.subtitle}</p>
+          <p class="project-desc">${proj.shortDesc}</p>
+
+          <!-- Key features -->
+          <ul class="project-features" aria-label="Key features">
+            ${proj.features.slice(0, 3).map(f => `<li>${f}</li>`).join('')}
+          </ul>
+
+          <!-- Tech stack badges -->
+          <div class="tech-stack" aria-label="Technologies used">
+            ${proj.techStack.map(t => `<span class="tech-badge">${t}</span>`).join('')}
+          </div>
+
+          <!-- Links -->
+          <div class="project-links">
+            <a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer"
+               class="btn btn-outline btn-sm" aria-label="View source code for ${proj.title} on GitHub">
+              🐙 Code
+            </a>
+            ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
+              <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
+                 class="btn btn-secondary btn-sm" aria-label="View live demo of ${proj.title}">
+                ↗ Demo
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      </article>
+    `;
+  };
+
+  // Card body rendering helper for explorer card
+  const renderCardBody = (proj) => `
+    <div class="project-body">
+      <div class="project-color-bar" style="background:${proj.color};" aria-hidden="true"></div>
+      <h3 class="project-title">${proj.title}</h3>
+      <p class="project-subtitle">${proj.subtitle}</p>
+      <p class="project-desc">${proj.shortDesc}</p>
+
+      <!-- Key features -->
+      <ul class="project-features" aria-label="Key features">
+        ${proj.features ? proj.features.slice(0, 3).map(f => `<li>${f}</li>`).join('') : ''}
+      </ul>
+
+      <!-- Tech stack badges -->
+      <div class="tech-stack" aria-label="Technologies used">
+        ${proj.techStack ? proj.techStack.map(t => `<span class="tech-badge">${t}</span>`).join('') : ''}
       </div>
 
-      <!-- Card body -->
-      <div class="project-body">
-        <div class="project-color-bar" style="background:${proj.color};" aria-hidden="true"></div>
-        <h3 class="project-title" id="proj-title-${proj.id}">${proj.title}</h3>
-        <p class="project-subtitle">${proj.subtitle}</p>
-        <p class="project-desc">${proj.shortDesc}</p>
-
-        <!-- Key features -->
-        <ul class="project-features" aria-label="Key features">
-          ${proj.features.slice(0, 3).map(f => `<li>${f}</li>`).join('')}
-        </ul>
-
-        <!-- Tech stack badges -->
-        <div class="tech-stack" aria-label="Technologies used">
-          ${proj.techStack.map(t => `<span class="tech-badge">${t}</span>`).join('')}
-        </div>
-
-        <!-- Links -->
-        <div class="project-links">
-          <a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer"
-             class="btn btn-outline btn-sm" aria-label="View source code for ${proj.title} on GitHub">
-            🐙 Code
+      <!-- Links -->
+      <div class="project-links">
+        <a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer"
+           class="btn btn-outline btn-sm" aria-label="View source code for ${proj.title} on GitHub">
+          🐙 Code
+        </a>
+        ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
+          <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
+             class="btn btn-secondary btn-sm" aria-label="View live demo of ${proj.title}">
+            ↗ Demo
           </a>
-          ${proj.demoUrl && proj.demoUrl !== '#' && proj.demoUrl !== proj.githubUrl ? `
-            <a href="${proj.demoUrl}" target="_blank" rel="noopener noreferrer"
-               class="btn btn-secondary btn-sm" aria-label="View live demo of ${proj.title}">
-              ↗ Demo
-            </a>
-          ` : ''}
-        </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+
+  // Render initial static local projects to main grid
+  let gridHTML = projects.map((proj, i) => renderCard(proj, i, true)).join('');
+
+  // Append the 4th Project Explorer Card
+  gridHTML += `
+    <article class="glass-card project-card project-explorer-card reveal delay-4" id="projectExplorerCard" style="cursor: default;">
+      <!-- Dropdown menu inside the header block -->
+      <div class="project-thumbnail project-explorer-header-block" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1.5rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.05)); border-bottom: 1px solid var(--border-subtle); height: 200px;">
+        <label for="projectDropdown" class="project-subtitle" style="margin-bottom: 0.5rem; font-weight: 600; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem;">Browse More Repos</label>
+        <select id="projectDropdown" class="glass-select" style="width: 100%; max-width: 280px;" aria-label="Select a project to view">
+          <option value="" disabled selected>Select a project...</option>
+        </select>
+        <span id="explorerNotice" class="explorer-notice" style="display: none; margin-top: 0.5rem;">⚠️ Offline Mode</span>
+      </div>
+
+      <!-- Selected project body rendering here -->
+      <div id="projectCardContainer" class="fade-in" aria-live="polite">
+        <!-- Dynamic card body populated by JS -->
       </div>
     </article>
   `;
 
-  // Render initial static local projects to main grid
-  grid.innerHTML = projects.map((proj, i) => renderCard(proj, i)).join('');
+  grid.innerHTML = gridHTML;
 
   if (!username) return;
 
   let extraProjects = [];
   const colors = ['#8b5cf6', '#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+  let fetchFailed = false;
 
   try {
     const res = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=30`);
@@ -415,6 +476,7 @@ async function renderProjects(projects, username, fallbackRepos) {
     }
   } catch (err) {
     console.warn('Could not sync live additional projects from GitHub, using local fallback:', err.message);
+    fetchFailed = true;
     if (fallbackRepos && fallbackRepos.length > 0) {
       const localUrls = projects.map(p => p.githubUrl.toLowerCase().trim().replace(/\/$/, ''));
       const uniqueFallbacks = fallbackRepos.filter(r => {
@@ -446,36 +508,44 @@ async function renderProjects(projects, username, fallbackRepos) {
     }
   }
 
-  if (extraProjects.length > 0) {
-    const container = grid.parentElement;
-    let moreSection = document.getElementById('moreProjectsSection');
-    
-    // Create 'More Projects' sub-section container if it doesn't exist
-    if (!moreSection) {
-      moreSection = document.createElement('div');
-      moreSection.id = 'moreProjectsSection';
-      moreSection.className = 'more-projects-container';
-      moreSection.style = 'margin-top: 5rem; width: 100%; border-top: 1px dashed var(--bg-secondary); padding-top: 4rem;';
-      
-      moreSection.innerHTML = `
-        <div class="section-header" style="margin-bottom: 3rem; text-align: center;">
-          <span class="section-label">Other Repositories</span>
-          <h3 class="section-title" style="font-size: 2rem; margin-top: 0.5rem; background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">More Projects</h3>
-          <p class="section-subtitle">Additional repositories synchronized in real-time from my GitHub profile.</p>
-        </div>
-        <div class="projects-grid" id="moreProjectsGrid" aria-label="More projects grid"></div>
-      `;
-      container.appendChild(moreSection);
-    }
-    
-    const moreGrid = document.getElementById('moreProjectsGrid');
-    if (moreGrid) {
-      moreGrid.innerHTML = extraProjects.map((proj, i) => renderCard(proj, projects.length + i)).join('');
-    }
-    
-    // Re-trigger scroll reveal transitions for new cards
-    if (typeof initScrollReveal === 'function') {
-      setTimeout(initScrollReveal, 100);
+  // Display or hide the offline/fallback badge warning
+  const dropdown = document.getElementById('projectDropdown');
+  const cardContainer = document.getElementById('projectCardContainer');
+  const explorerNotice = document.getElementById('explorerNotice');
+
+  if (explorerNotice) {
+    explorerNotice.style.display = fetchFailed ? 'inline-block' : 'none';
+  }
+
+  // Combine static and dynamic projects into a single list
+  const allProjects = [...projects, ...extraProjects];
+
+  if (dropdown && cardContainer) {
+    // Populate the dropdown with options
+    dropdown.innerHTML = '<option value="" disabled>Select a project...</option>' +
+      allProjects.map((proj, idx) => `<option value="${idx}">${proj.title}</option>`).join('');
+
+    // Dynamic rendering helper function
+    const updateExplorerCard = (index) => {
+      const selectedProj = allProjects[index];
+      if (!selectedProj) return;
+
+      // Trigger fade transition
+      cardContainer.classList.remove('fade-in');
+      void cardContainer.offsetWidth; // trigger reflow
+      cardContainer.innerHTML = renderCardBody(selectedProj);
+      cardContainer.classList.add('fade-in');
+    };
+
+    // Change event listener
+    dropdown.addEventListener('change', (e) => {
+      updateExplorerCard(parseInt(e.target.value, 10));
+    });
+
+    // Load and select the first project by default
+    if (allProjects.length > 0) {
+      dropdown.selectedIndex = 1; // Select first item (index 0 in allProjects, index 1 in select list options)
+      updateExplorerCard(0);
     }
   }
 }

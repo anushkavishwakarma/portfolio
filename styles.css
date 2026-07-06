@@ -1702,6 +1702,154 @@ footer {
   :root { --container-max: 1320px; }
 }
 
+
+/* ── 22b. Project Explorer Section ──────────────────────── */
+.project-explorer {
+  margin-top: 3rem;
+  padding: 2.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+}
+
+.explorer-header {
+  text-align: center;
+  max-width: 600px;
+}
+
+.explorer-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.explorer-controls {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.glass-select {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-glass-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a5b4fc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center;
+  background-size: 1.2rem;
+  padding-right: 3rem;
+}
+
+.glass-select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.glass-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.explorer-notice {
+  font-size: 0.78rem;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.project-card-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 250px;
+}
+
+.fade-in {
+  animation: cardFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.more-projects-link-container {
+  margin-top: 1rem;
+}
+
+.more-projects-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.more-projects-link:hover {
+  color: var(--accent-cyan);
+  text-decoration: underline;
+}
+
+.more-projects-link .arrow-icon {
+  transition: transform var(--transition-fast);
+}
+
+.more-projects-link:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .project-explorer {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  .explorer-controls {
+    max-width: 100%;
+  }
+  .explorer-selected-card {
+    max-width: 100%;
+  }
+}
+
 /* ── 23. Print Styles ──────────────────────────────────── */
 @media print {
   #navbar, .back-to-top, #hero .scroll-indicator, .modal-overlay { display: none; }
