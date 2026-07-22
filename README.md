@@ -1,4 +1,4 @@
-# 📊 Anushka Sharma — Portfolio
+# 📊 Anushka Vishwakarma — Portfolio
 
 > **Aspiring Data Analyst & AI Engineer** | CS Graduate
 
@@ -90,7 +90,7 @@ Search and replace these strings throughout the files:
 
 | Placeholder | Replace With |
 |---|---|
-| `Anushka Sharma` | Your full name |
+| `Anushka Vishwakarma` | Your full name |
 | `INSTITUTION_NAME` | Your university/college |
 | `GITHUB_USERNAME` | Your GitHub username |
 | `LINKEDIN_USERNAME` | Your LinkedIn profile slug |
